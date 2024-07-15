@@ -11,7 +11,7 @@ This is a simple implementation of the classic Hangman game in Rust. The game al
 
 ## Requirements
 
-- Rust programming language (version X.X.X)
+- Rust programming language (version 1.75.0)
 - Cargo build system
 
 ## Installation
