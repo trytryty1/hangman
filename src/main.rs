@@ -1,6 +1,6 @@
+use rand::Rng;
 use std::fs;
 use std::io;
-use rand::Rng;
 
 fn main() {
     // Load the wordlist
@@ -15,16 +15,18 @@ fn main() {
     let word = get_random_word(&word_list);
     let mut lives: u8 = 5;
     loop {
-
-
         // Prints only the letters guessed in the word and checks if the game has been won
         let mut finished = true;
         for c in word.chars() {
-            if guessed_chars[(c as u8 - b'a' ) as usize] {
-                print!("{c}");
+            if c.is_ascii_lowercase() {
+                if guessed_chars[(c as u8 - b'a') as usize] {
+                    print!("{c}");
+                } else {
+                    print!("_");
+                    finished = false;
+                }
             } else {
-                print!("_");
-                finished = false;
+                print!("{c}");
             }
         }
         print!("\n");
@@ -55,16 +57,14 @@ fn main() {
             println!("You have {lives} lives left.");
 
             // Check if the player has lost all of his or her lives
-            if lives <= 0  {
-                println!("You have run out of lives. \nYou lose");
+            if lives <= 0 {
+                println!("You have run out of lives. \nYou lose. The word was {word}.");
                 break;
             }
         } else {
             println!("That letter appeared in the word {used_letter} times.");
         }
-
     }
-
 }
 
 fn prompt_for_letter(guessed_chars: &[bool; 26]) -> char {
@@ -76,12 +76,14 @@ fn prompt_for_letter(guessed_chars: &[bool; 26]) -> char {
             .read_line(&mut guess)
             .expect("Failed to read line");
 
+        // Trim the input
+        let guess = guess.trim();
+
         // Check all conditions:
         // Must be one character
         // Character must be a letter
         // Letter must not have been guessed yet
-        if guess.chars().count() == 2 {
-            guess = guess.to_lowercase();
+        if guess.chars().count() == 1 {
             let c = guess.chars().nth(0).unwrap();
             let val: isize = c as isize - (b'a' as isize);
             if val < 0 || val > 26 {
@@ -94,6 +96,10 @@ fn prompt_for_letter(guessed_chars: &[bool; 26]) -> char {
                 }
             }
         } else {
+            // print all the characters in the input
+            for c in guess.chars() {
+                println!("{c}");
+            }
             println!("Please enter a single letter.");
         }
     }
@@ -112,8 +118,8 @@ Loads a word list at the file path given
 **/
 fn load_word_list(file_path: String) -> WordList {
     // Load file as a string from file_path
-    let word_list_string: String = fs::read_to_string(&file_path)
-        .expect("Should have been able to read the file");
+    let word_list_string: String =
+        fs::read_to_string(&file_path).expect("Should have been able to read the file");
 
     // Split the file string into individual words
     let words: Vec<String> = word_list_string.split("\n").map(str::to_string).collect();
@@ -121,10 +127,7 @@ fn load_word_list(file_path: String) -> WordList {
     // Get the amount of words in the wordlist
     let length: usize = words.len();
 
-    let word_list = WordList {
-        words,
-        length,
-    };
+    let word_list = WordList { words, length };
     return word_list;
 }
 
@@ -135,10 +138,10 @@ fn get_random_word(word_list: &WordList) -> String {
     let len = word_list.length;
 
     // Gets a random index within the bounds of the wordlist vector
-    let index = rand::thread_rng().gen_range(1..= len);
+    let index = rand::thread_rng().gen_range(1..=len);
 
     // Get the random word
-    let word:String = word_list.words.as_slice()[index].clone();
+    let word: String = word_list.words.as_slice()[index].clone();
 
     return word;
 }
