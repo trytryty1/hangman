@@ -19,19 +19,16 @@ This is a simple implementation of the classic Hangman game in Rust. The game al
 Clone the repository:
 
 ```bash
-Copy code
 git clone https://github.com/your_username/hangman-rust.git
 ```
 Navigate into the project directory:
 
 ```bash
-Copy code
 cd hangman-rust
 ```
 Build the project:
 
 ```bash
-Copy code
 cargo build --release
 ```
 
